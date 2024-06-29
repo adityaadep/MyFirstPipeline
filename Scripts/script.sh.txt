@@ -1,0 +1,136 @@
+#!/bin/bash
+
+# Update package manager repositories
+sudo apt-get update
+
+# Install necessary dependencies
+sudo apt-get install -y ca-certificates curl
+
+# Create directory for Docker GPG key
+sudo install -m 0755 -d /etc/apt/keyrings
+
+# Download Docker's GPG key
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+
+# Ensure proper permissions for the key
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+# Add Docker repository to Apt sources
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+$(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# Update package manager repositories
+sudo apt-get update
+
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+
+sudo chmod 666 /var/run/docker.sock
+========================================================================
+
+setup kube clustert
+
+
+
+sudo apt-get update
+sudo apt install docker.io -y
+sudo chmod 666 /var/run/docker.sock
+sudo apt-get install -y apt-transport-https ca-certificates curl gnupg
+sudo mkdir -p -m 755 /etc/apt/keyrings
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+
+
+sudo apt update
+
+sudo apt install -y kubeadm=1.28.1-1.1 kubelet=1.28.1-1.1 kubectl=1.28.1-1.1
+
+
+only on master 
+
+sudo kubeadm init --pod-network-cidr=10.244.0.0/16
+
+
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+
+kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.49.0/deploy/static/provider/baremetal/deploy.yaml
+
+
+===========================
+--ignore-preflight-errors=NumCPU,Mem
+
+join worked nodes
+
+kubeadm join 172.31.15.99:6443 --token 5khpkr.7tfv1lq2mc3a4q59 \
+        --discovery-token-ca-cert-hash sha256:7e7320b43bfb7d3275793bdf6fbd9f80aae46f71cafa3e422fe18015d2f77d33
+		
+		
+		
+	https://github.com/Shopify/kubeaudit/releases/	
+
+
+kubeaudit_0.22.1_linux_amd64.tar.gz
+
+to scan kube clustert
+===========================
+wget https://github.com/Shopify/kubeaudit/releases/download/v0.22.1/kubeaudit_0.22.1_linux_amd64.tar.gz
+tar -xvzf kubeaudit_0.22.1_linux_amd64.tar.gz
+sudo mv kubeaudit /usr/local/bin
+
+
+
+==========================================================
+
+
+
+sonar 
+
+admin 
+password - admin 
+
+nexus -
+docker exec -it <container_ID> /bin/bash
+cd sonatype-work/nexus3
+cat admin.password
+71fbbfb9-2c88-4d5f-88fa-96c2543430d3
+exit
+
+
+
+JENKINS
+
+
+INSTALL JAVA
+
+sudo apt install openjdk-17-jre-headless
+
+
+
+
+triva installation steps
+
+sudo apt-get install wget apt-transport-https gnupg lsb-release
+
+wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null 
+
+echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
+
+sudo apt-get update
+
+sudo apt-get install trivy -y
+
+
+trivy image imagename
+trivy fs --security-checks vuln,config Folder_name_or_path
+
+trivy image --severity HIGH,CRITICAL image_name
+
+
+
